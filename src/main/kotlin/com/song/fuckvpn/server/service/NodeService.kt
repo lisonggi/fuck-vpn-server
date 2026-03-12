@@ -1,6 +1,6 @@
 package com.song.fuckvpn.server.service
 
-import com.song.fuckvpn.plugin.plugin.NodePlugin
+import com.song.fuckvpn.plugin.api.NodePlugin
 import com.song.fuckvpn.server.dto.ServiceInfo
 
 

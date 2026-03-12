@@ -4,7 +4,6 @@ plugins {
     id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.github.jk1.dependency-license-report") version "3.1.1"  // x-release-please-version
-    id("com.gradleup.shadow") version "8.3.0"
 }
 licenseReport {
     outputDir = "$projectDir/licenses"

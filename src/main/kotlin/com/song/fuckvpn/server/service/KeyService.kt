@@ -1,6 +1,6 @@
 package com.song.fuckvpn.server.service
 
-import com.song.fuckvpn.plugin.plugin.KeyPlugin
+import com.song.fuckvpn.plugin.api.KeyPlugin
 import com.song.fuckvpn.server.common.util.log
 import com.song.fuckvpn.server.dto.ServiceInfo
 

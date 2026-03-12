@@ -1,8 +1,8 @@
 package com.song.fuckvpn.server.service
 
-import com.song.fuckvpn.plugin.annotation.VPNPlugin
-import com.song.fuckvpn.plugin.plugin.KeyPlugin
-import com.song.fuckvpn.plugin.plugin.NodePlugin
+import com.song.fuckvpn.plugin.api.KeyPlugin
+import com.song.fuckvpn.plugin.api.NodePlugin
+import com.song.fuckvpn.plugin.api.annotation.VPNPlugin
 import com.song.fuckvpn.server.common.exception.AppException
 import com.song.fuckvpn.server.common.util.log
 import com.song.fuckvpn.server.dto.ServiceInfo
@@ -17,7 +17,7 @@ class PluginService {
     constructor() {
         val plugins = mutableMapOf<String, NodeService>()
         val pluginDir = File("plugins")
-
+        pluginDir.absolutePath.log.info()
         val urls = pluginDir.listFiles { f -> f.extension == "jar" }?.map { it.toURI().toURL() }?.toTypedArray()
             ?: emptyArray()
         val classLoader = URLClassLoader(urls, this::class.java.classLoader)
