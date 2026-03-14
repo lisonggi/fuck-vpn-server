@@ -2,14 +2,13 @@ package com.song.fuckvpn.server.service
 
 import com.song.fuckvpn.plugin.api.KeyPlugin
 import com.song.fuckvpn.server.common.util.log
-import com.song.fuckvpn.server.dto.ServiceInfo
+import com.song.fuckvpn.server.dto.PluginInfo
 
 class KeyService : NodeService {
     private val keyPlugin: KeyPlugin
 
-    constructor(serviceInfo: ServiceInfo, keyService: KeyPlugin) : super(serviceInfo, keyService) {
+    constructor(pluginInfo: PluginInfo, keyService: KeyPlugin) : super(pluginInfo, keyService) {
         this.keyPlugin = keyService
-        "${"a"}key init".log.info()
     }
 
     fun getKeyPlugin(): KeyPlugin {

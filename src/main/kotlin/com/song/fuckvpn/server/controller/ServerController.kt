@@ -1,23 +1,25 @@
 package com.song.fuckvpn.server.controller
 
 import com.song.fuckvpn.server.common.dto.ResultDto
-import com.song.fuckvpn.server.service.PluginService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.song.fuckvpn.server.dto.StatusRequest
+import com.song.fuckvpn.server.service.ServiceLoader
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/{id}")
 @RestController
 class ServerController(
-    private val pluginService: PluginService,
+    private val serviceLoader: ServiceLoader,
 ) {
-    @GetMapping("/getserverstate")
+    @GetMapping("/getServerState")
     fun getServerState(@PathVariable id: String): ResultDto {
-        TODO()
+        val nodeService = serviceLoader.getNodeService(id)
+        return ResultDto("ok", StatusRequest(nodeService.serviceState))
     }
-    @GetMapping("/setserverstate")
-    fun setServerState(@PathVariable id: String): ResultDto {
-        TODO()
+
+    @PutMapping("/setServerState")
+    fun setServerState(@PathVariable id: String, @RequestBody req: StatusRequest): ResultDto {
+        val nodeService = serviceLoader.getNodeService(id)
+        val serverState = nodeService.updateServerState(req.state)
+        return ResultDto("ok", StatusRequest(serverState))
     }
 }

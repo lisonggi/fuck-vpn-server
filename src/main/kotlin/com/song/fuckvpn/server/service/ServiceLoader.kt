@@ -5,13 +5,15 @@ import com.song.fuckvpn.plugin.api.NodePlugin
 import com.song.fuckvpn.plugin.api.annotation.VPNPlugin
 import com.song.fuckvpn.server.common.exception.AppException
 import com.song.fuckvpn.server.common.util.log
-import com.song.fuckvpn.server.dto.ServiceInfo
+import com.song.fuckvpn.server.dto.PluginInfo
 import com.song.fuckvpn.server.enums.ServiceType
 import io.github.classgraph.ClassGraph
+import org.springframework.stereotype.Service
 import java.io.File
 import java.net.URLClassLoader
 
-class PluginService {
+@Service
+class ServiceLoader {
     private val serviceMap: Map<String, NodeService>
 
     constructor() {
@@ -34,12 +36,12 @@ class PluginService {
                 if (KeyPlugin::class.java.isAssignableFrom(clazz)) {
                     type = ServiceType.KEY
                     val keyPlugin: KeyPlugin = instance as KeyPlugin
-                    plugins[id] = KeyService(ServiceInfo(id, name, type), keyPlugin)
+                    plugins[id] = KeyService(PluginInfo(id, name, type), keyPlugin)
                     "plugin: id:${id} name:${name} type:${type}".log.info()
                 } else if (NodePlugin::class.java.isAssignableFrom(clazz)) {
                     type = ServiceType.NODE
                     val nodePlugin: NodePlugin = instance as NodePlugin
-                    plugins[id] = NodeService(ServiceInfo(id, name, type), nodePlugin)
+                    plugins[id] = NodeService(PluginInfo(id, name, type), nodePlugin)
                     "plugin: id:${id} name:${name} type:${type}".log.info()
                 } else {
                     "Not supported plugin: id:${id} name:${name}".log.info()
@@ -49,25 +51,25 @@ class PluginService {
         this.serviceMap = plugins.toMap()
     }
 
-    fun getServicesInfo(): List<ServiceInfo> {
-        val serviceInfoList = mutableListOf<ServiceInfo>()
+    fun getAllPlugin(): List<PluginInfo> {
+        val pluginInfoList = mutableListOf<PluginInfo>()
         serviceMap.forEach { (id) ->
-            serviceInfoList.add(getServiceInfo(id))
+            pluginInfoList.add(getPlugin(id))
         }
-        return serviceInfoList
+        return pluginInfoList
     }
 
-    fun getServiceInfo(id: String): ServiceInfo {
+    fun getPlugin(id: String): PluginInfo {
         val service = serviceMap[id] ?: throw AppException("${id}不存在")
-        return service.getServiceInfo()
+        return service.pluginInfo
     }
 
-    fun getService(id: String): NodeService {
+    fun getNodeService(id: String): NodeService {
         return serviceMap[id] ?: throw AppException("${id}不存在")
     }
 
     fun getKeyService(id: String): KeyService {
-        val service = getService(id)
+        val service = getNodeService(id)
         if (service is KeyService) {
             return service
         } else {

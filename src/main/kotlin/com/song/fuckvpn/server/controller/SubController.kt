@@ -1,22 +1,15 @@
 package com.song.fuckvpn.server.controller
 
 import com.song.fuckvpn.server.common.dto.ResultDto
-import com.song.fuckvpn.server.service.PluginService
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.song.fuckvpn.server.service.ServiceLoader
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/{id}")
 @RestController
 class SubController(
-    private val pluginService: PluginService,
+    private val serviceLoader: ServiceLoader,
 ) {
-    @GetMapping("/getsubs")
+    @GetMapping("/getSubs")
     fun getSubs(@PathVariable id: String): ResultDto {
         TODO()
     }

@@ -1,31 +1,25 @@
 package com.song.fuckvpn.server.controller
 
 import com.song.fuckvpn.server.common.dto.ResultDto
-import com.song.fuckvpn.server.service.PluginService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import com.song.fuckvpn.server.service.ServiceLoader
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/{id}")
 @RestController
 class KeyController(
-    private val pluginService: PluginService,
+    private val serviceLoader: ServiceLoader,
 ) {
-    @GetMapping("/getkeys")
+    @GetMapping("/getKeys")
     fun getKeys(@PathVariable id: String): ResultDto {
         TODO()
     }
 
-    @PostMapping("/usekey")
+    @PostMapping("/useKey")
     fun useKey(@PathVariable id: String, @RequestBody keyId: String): ResultDto {
         TODO()
     }
 
-    @PutMapping("/refreshkeys")
+    @PostMapping("/refreshKeys")
     fun refreshKeys(@PathVariable id: String): ResultDto {
         TODO()
     }

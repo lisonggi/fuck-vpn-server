@@ -1,6 +1,6 @@
 package com.song.fuckvpn.server
 
-import com.song.fuckvpn.server.service.PluginService
+import com.song.fuckvpn.server.service.ServiceLoader
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -8,6 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest
 class AppTest {
     @Test
     fun testApp() {
-        val a = PluginService()
+        val a = ServiceLoader()
     }
 }
