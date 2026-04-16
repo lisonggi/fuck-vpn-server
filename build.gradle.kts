@@ -40,10 +40,9 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("io.github.classgraph:classgraph:4.8.184")
-//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("org.openapitools:jackson-databind-nullable:0.2.10")
-    implementation("com.github.lisonggi:fuck-vpn-plugin-api:6147efde1d")
+    implementation("com.github.lisonggi:fuck-vpn-plugin-api:1.0")
 }
 
 kotlin {
