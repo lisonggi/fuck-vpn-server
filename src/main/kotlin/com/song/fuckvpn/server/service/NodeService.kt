@@ -15,14 +15,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import java.io.File
 
 open class NodeService(
     val pluginInfo: PluginInfo, private val nodePlugin: NodePlugin
 ) : Lifecycle {
     protected val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    protected val configStore = ConfigStore(File("plugin-configs/${pluginInfo.id}.json"), PluginConfig.serializer(),
+    protected val configStore = ConfigStore("plugin-configs/${pluginInfo.id}.json", PluginConfig.serializer(),
         { PluginConfig() })
     protected val config = configStore.load()
 

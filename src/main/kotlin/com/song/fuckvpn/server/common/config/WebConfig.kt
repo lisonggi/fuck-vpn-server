@@ -1,6 +1,9 @@
 package com.song.fuckvpn.server.common.config
 
 import com.song.fuckvpn.server.service.AuthService
+import com.song.fuckvpn.server.store.ConfigStore
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
@@ -10,6 +13,13 @@ import org.springframework.web.util.pattern.PathPatternParser
 
 @Configuration
 class WebConfig(val authService: AuthService) : WebMvcConfigurer {
+    val configStore = ConfigStore(
+        "OriginPatternsConfig.json",
+        ListSerializer(String.serializer())
+    ) { emptyList() }
+
+    val originPatternsConfig = configStore.load(true)
+
     override fun configurePathMatch(configurer: PathMatchConfigurer) {
         val parser = PathPatternParser()
         parser.isCaseSensitive = false
@@ -18,14 +28,11 @@ class WebConfig(val authService: AuthService) : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOriginPatterns("http://localhost:*",
-                "http://127.0.0.1:*",
-                "http://192.168.*",
-                "https://localhost:*",
-                "https://127.0.0.1:*",
-                "https://192.168.*")
-            .allowedMethods("*")
+            .allowedOriginPatterns(
+                *originPatternsConfig.toTypedArray()
+            )
             .allowCredentials(true)
+            .allowedMethods("*")
             .allowedHeaders("*")
     }
 

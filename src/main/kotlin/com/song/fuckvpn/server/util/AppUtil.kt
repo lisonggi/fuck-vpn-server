@@ -5,6 +5,8 @@ import org.openapitools.jackson.nullable.JsonNullable
 import org.slf4j.LoggerFactory
 import java.security.MessageDigest
 
+val DefaultPath = "usr"
+
 fun <T> JsonNullable<T>.getOrKeep(old: T?): T? {
     return if (isPresent) get() else old
 }

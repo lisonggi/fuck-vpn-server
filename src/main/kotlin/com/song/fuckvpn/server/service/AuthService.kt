@@ -7,13 +7,10 @@ import com.song.fuckvpn.server.util.IdUtil
 import jakarta.annotation.PreDestroy
 import kotlinx.serialization.builtins.nullable
 import org.springframework.stereotype.Service
-import java.io.File
 
 @Service
 class AuthService {
-
-    val configStore: ConfigStore<UserConfig?> =
-        ConfigStore(File("auth-config.json"), UserConfig.serializer().nullable, { null })
+    val configStore: ConfigStore<UserConfig?> = ConfigStore("UserConfig.json", UserConfig.serializer().nullable) { null }
     var userConfig: UserConfig? = configStore.load()
     var token = generateToken()
 

@@ -5,6 +5,7 @@ import com.song.fuckvpn.plugin.api.NodePlugin
 import com.song.fuckvpn.plugin.api.annotation.VPNPlugin
 import com.song.fuckvpn.server.common.exception.PluginNotSupportedException
 import com.song.fuckvpn.server.dto.PluginInfoDto
+import com.song.fuckvpn.server.util.DefaultPath
 import com.song.fuckvpn.server.util.log
 import io.github.classgraph.ClassGraph
 import jakarta.annotation.PostConstruct
@@ -19,7 +20,7 @@ class ServiceLoader {
 
     constructor() {
         val plugins = mutableMapOf<String, NodeService>()
-        val pluginDir = File("plugins")
+        val pluginDir = File("${DefaultPath}/plugins")
         pluginDir.absolutePath.log.info()
         val urls = pluginDir.listFiles { f -> f.extension == "jar" }?.map { it.toURI().toURL() }?.toTypedArray()
             ?: emptyArray()
