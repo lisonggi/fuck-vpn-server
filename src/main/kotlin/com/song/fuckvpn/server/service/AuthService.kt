@@ -3,7 +3,7 @@ package com.song.fuckvpn.server.service
 import com.song.fuckvpn.server.common.exception.AuthException
 import com.song.fuckvpn.server.dto.UserLoginRequest
 import com.song.fuckvpn.server.dto.UserUpdateConfigRequest
-import com.song.fuckvpn.server.model.TokenModel
+import com.song.fuckvpn.server.model.UserTokenModel
 import com.song.fuckvpn.server.model.UserConfigModel
 import com.song.fuckvpn.server.store.ConfigStore
 import com.song.fuckvpn.server.util.IdUtil
@@ -17,21 +17,21 @@ class AuthService {
         ConfigStore("UserConfig.json", UserConfigModel.serializer().nullable) { null }
     private var config: UserConfigModel? = configStore.load()
 
-    private val defaultTokenModel = TokenModel(generateToken())
-    private var tokenModel: TokenModel = defaultTokenModel
+    private val defaultTokenModel = UserTokenModel(generateToken())
+    private var tokenModel: UserTokenModel = defaultTokenModel
 
-    fun login(request: UserLoginRequest): TokenModel {
+    fun login(request: UserLoginRequest): UserTokenModel {
         this.config?.let {
             if (config != UserConfigModel.fromLoginRequest(request)) {
                 throw AuthException("用户名或密码错误")
             }
         }
-        val token = TokenModel(generateToken())
+        val token = UserTokenModel(generateToken())
         this.tokenModel = token
         return token
     }
 
-    fun logout(): TokenModel {
+    fun logout(): UserTokenModel {
         val token = tokenModel
         this.tokenModel = defaultTokenModel
         return token

@@ -9,8 +9,6 @@ data class PluginConfigResponse(
     val enabled: Boolean,
     val configUpdating: Boolean,
     val pluginInfo: PluginInfoModel
-
-
 ) {
     companion object {
         fun fromManager(manager: PluginManager): PluginConfigResponse {

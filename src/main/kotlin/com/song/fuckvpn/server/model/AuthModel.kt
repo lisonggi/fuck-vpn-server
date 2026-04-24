@@ -24,4 +24,4 @@ data class UserConfigModel(val username: String, val password: String) {
 }
 
 
-data class TokenModel(val token: String)
+data class UserTokenModel(val token: String)
