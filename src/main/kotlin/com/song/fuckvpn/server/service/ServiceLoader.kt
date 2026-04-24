@@ -1,10 +1,11 @@
 package com.song.fuckvpn.server.service
 
-import com.song.fuckvpn.plugin.api.KeyPlugin
-import com.song.fuckvpn.plugin.api.NodePlugin
 import com.song.fuckvpn.plugin.api.annotation.VPNPlugin
+import com.song.fuckvpn.plugin.api.spec.KeyPluginSpec
+import com.song.fuckvpn.plugin.api.spec.NodePluginSpec
 import com.song.fuckvpn.server.common.exception.PluginNotSupportedException
-import com.song.fuckvpn.server.dto.PluginInfoDto
+import com.song.fuckvpn.server.enums.ServiceType
+import com.song.fuckvpn.server.model.toModel
 import com.song.fuckvpn.server.util.DefaultPath
 import com.song.fuckvpn.server.util.log
 import io.github.classgraph.ClassGraph
@@ -34,37 +35,32 @@ class ServiceLoader {
         scanResult.forEach { classInfo ->
             val clazz = classInfo.loadClass()
             val instance = clazz.getDeclaredConstructor().newInstance()
-            if (NodePlugin::class.java.isAssignableFrom(clazz)) {
-                val nodePlugin: NodePlugin = instance as NodePlugin
+            if (NodePluginSpec::class.java.isAssignableFrom(clazz)) {
+                val nodePlugin: NodePluginSpec = instance as NodePluginSpec
                 val pluginInfo = nodePlugin.getPluginInfo()
-                val isKeyService: Boolean = KeyPlugin::class.java.isAssignableFrom(clazz)
-                if (isKeyService) {
-                    val keyPlugin: KeyPlugin = instance as KeyPlugin
-                    plugins[pluginInfo.id] = KeyService(pluginInfo, keyPlugin)
+                val service: NodeService = if (nodePlugin is KeyPluginSpec) {
+                    KeyService(pluginInfo.toModel(ServiceType.KEY), nodePlugin)
                 } else {
-                    plugins[pluginInfo.id] = NodeService(pluginInfo, nodePlugin)
+                    NodeService(pluginInfo.toModel(ServiceType.NODE), nodePlugin)
                 }
-                "已经装载 ${if (isKeyService) "KeyService" else "NodeService"}: $pluginInfo".log.info()
+                val info = service.pluginManager().getInfo()
+                plugins[info.id] = service
+                "已装载 ${info}".log.info()
             }
         }
-        this.serviceMap = plugins.toMap()
+        this.serviceMap = plugins
     }
 
-    fun getAllPlugin(): List<PluginInfoDto> {
-        val pluginInfoDtoDtoList = mutableListOf<PluginInfoDto>()
-        serviceMap.forEach { (id) ->
-            pluginInfoDtoDtoList.add(getPlugin(id))
-        }
-        return pluginInfoDtoDtoList
+    fun getAllService(): List<NodeService> {
+        return serviceMap.values.toList()
     }
 
-    fun getPlugin(id: String): PluginInfoDto {
-        val service = serviceMap[id] ?: throw PluginNotSupportedException("${id}不存在")
-        return PluginInfoDto(service.stateManager.enabled, service is KeyService, service.pluginInfo)
+    fun getService(id: String): NodeService {
+        return serviceMap[id] ?: throw PluginNotSupportedException("${id}不存在")
     }
 
     fun getNodeService(id: String): NodeService {
-        return serviceMap[id] ?: throw PluginNotSupportedException("${id}不存在")
+        return getService(id)
     }
 
     fun getKeyService(id: String): KeyService {

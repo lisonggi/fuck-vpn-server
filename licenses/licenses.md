@@ -1,7 +1,7 @@
 
 # fuck-vpn-server
 ## Dependency License Report
-_2026-04-16 14:02:55 CST_
+_2026-04-24 22:46:47 CST_
 ## Apache License 2.0
 
 **1** **Group:** `org.openapitools` **Name:** `jackson-databind-nullable` **Version:** `0.2.10` 
@@ -357,63 +357,57 @@ _2026-04-16 14:02:55 CST_
 > - **POM License**: MIT - [https://opensource.org/license/mit](https://opensource.org/license/mit)
 > - **Embedded license files**: [slf4j-api-2.0.17.jar/META-INF/LICENSE.txt](slf4j-api-2.0.17.jar/META-INF/LICENSE.txt)
 
-## MIT License
-
-**58** **Group:** `com.github.lisonggi` **Name:** `fuck-vpn-plugin-api` **Version:** `6147efde1d` 
-> - **POM Project URL**: [https://github.com/lisonggi/fuck-vpn-plugin-api](https://github.com/lisonggi/fuck-vpn-plugin-api)
-> - **POM License**: MIT License - [https://api.github.com/licenses/mit](https://api.github.com/licenses/mit)
-
 ## The Apache License, Version 2.0
 
-**59** **Group:** `org.jspecify` **Name:** `jspecify` **Version:** `1.0.0` 
+**58** **Group:** `org.jspecify` **Name:** `jspecify` **Version:** `1.0.0` 
 > - **Manifest Project URL**: [https://jspecify.dev/docs/start-here](https://jspecify.dev/docs/start-here)
 > - **POM Project URL**: [http://jspecify.org/](http://jspecify.org/)
 > - **POM License**: The Apache License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 ## The Apache Software License, Version 2.0
 
-**60** **Group:** `com.fasterxml.jackson.core` **Name:** `jackson-annotations` **Version:** `2.21` 
+**59** **Group:** `com.fasterxml.jackson.core` **Name:** `jackson-annotations` **Version:** `2.21` 
 > - **Project URL**: [https://github.com/FasterXML/jackson](https://github.com/FasterXML/jackson)
 > - **POM License**: The Apache Software License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **Embedded license files**: [jackson-annotations-2.21.jar/META-INF/LICENSE](jackson-annotations-2.21.jar/META-INF/LICENSE) 
     - [jackson-annotations-2.21.jar/META-INF/NOTICE](jackson-annotations-2.21.jar/META-INF/NOTICE)
 
-**61** **Group:** `io.micrometer` **Name:** `micrometer-commons` **Version:** `1.16.4` 
+**60** **Group:** `io.micrometer` **Name:** `micrometer-commons` **Version:** `1.16.4` 
 > - **POM Project URL**: [https://github.com/micrometer-metrics/micrometer](https://github.com/micrometer-metrics/micrometer)
 > - **POM License**: The Apache Software License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **Embedded license files**: [micrometer-commons-1.16.4.jar/META-INF/LICENSE](micrometer-commons-1.16.4.jar/META-INF/LICENSE) 
     - [micrometer-commons-1.16.4.jar/META-INF/NOTICE](micrometer-commons-1.16.4.jar/META-INF/NOTICE)
 
-**62** **Group:** `io.micrometer` **Name:** `micrometer-observation` **Version:** `1.16.4` 
+**61** **Group:** `io.micrometer` **Name:** `micrometer-observation` **Version:** `1.16.4` 
 > - **POM Project URL**: [https://github.com/micrometer-metrics/micrometer](https://github.com/micrometer-metrics/micrometer)
 > - **POM License**: The Apache Software License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **Embedded license files**: [micrometer-observation-1.16.4.jar/META-INF/LICENSE](micrometer-observation-1.16.4.jar/META-INF/LICENSE) 
     - [micrometer-observation-1.16.4.jar/META-INF/NOTICE](micrometer-observation-1.16.4.jar/META-INF/NOTICE)
 
-**63** **Group:** `org.jetbrains` **Name:** `annotations` **Version:** `23.0.0` 
+**62** **Group:** `org.jetbrains` **Name:** `annotations` **Version:** `23.0.0` 
 > - **POM Project URL**: [https://github.com/JetBrains/java-annotations](https://github.com/JetBrains/java-annotations)
 > - **POM License**: The Apache Software License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
-**64** **Group:** `org.openapitools` **Name:** `jackson-databind-nullable` **Version:** `0.2.10` 
+**63** **Group:** `org.openapitools` **Name:** `jackson-databind-nullable` **Version:** `0.2.10` 
 > - **Project URL**: [https://github.com/OpenAPITools/jackson-databind-nullable](https://github.com/OpenAPITools/jackson-databind-nullable)
 > - **POM License**: Apache License 2.0 - [https://www.apache.org/licenses/LICENSE-2.0.html](https://www.apache.org/licenses/LICENSE-2.0.html)
 > - **POM License**: Apache License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **POM License**: The Apache Software License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **Embedded license files**: [jackson-databind-nullable-0.2.10.jar/META-INF/LICENSE](jackson-databind-nullable-0.2.10.jar/META-INF/LICENSE)
 
-**65** **Group:** `tools.jackson` **Name:** `jackson-bom` **Version:** `3.1.0` 
+**64** **Group:** `tools.jackson` **Name:** `jackson-bom` **Version:** `3.1.0` 
 > - **POM Project URL**: [https://github.com/FasterXML/jackson-bom](https://github.com/FasterXML/jackson-bom)
 > - **POM License**: Apache License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **POM License**: The Apache Software License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-**66** **Group:** `tools.jackson.core` **Name:** `jackson-core` **Version:** `3.1.0` 
+**65** **Group:** `tools.jackson.core` **Name:** `jackson-core` **Version:** `3.1.0` 
 > - **Project URL**: [https://github.com/FasterXML/jackson-core](https://github.com/FasterXML/jackson-core)
 > - **POM License**: Apache License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **POM License**: The Apache Software License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **Embedded license files**: [jackson-core-3.1.0.jar/META-INF/LICENSE](jackson-core-3.1.0.jar/META-INF/LICENSE) 
     - [jackson-core-3.1.0.jar/META-INF/NOTICE](jackson-core-3.1.0.jar/META-INF/NOTICE)
 
-**67** **Group:** `tools.jackson.core` **Name:** `jackson-databind` **Version:** `3.1.0` 
+**66** **Group:** `tools.jackson.core` **Name:** `jackson-databind` **Version:** `3.1.0` 
 > - **Project URL**: [https://github.com/FasterXML/jackson](https://github.com/FasterXML/jackson)
 > - **POM License**: Apache License, Version 2.0 - [http://www.apache.org/licenses/LICENSE-2.0.txt](http://www.apache.org/licenses/LICENSE-2.0.txt)
 > - **POM License**: The Apache Software License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0.txt](https://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -422,7 +416,7 @@ _2026-04-16 14:02:55 CST_
 
 ## The MIT License (MIT)
 
-**68** **Group:** `io.github.classgraph` **Name:** `classgraph` **Version:** `4.8.184` 
+**67** **Group:** `io.github.classgraph` **Name:** `classgraph` **Version:** `4.8.184` 
 > - **POM Project URL**: [https://github.com/classgraph/classgraph](https://github.com/classgraph/classgraph)
 > - **POM License**: The MIT License (MIT) - [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
 > - **Embedded license files**: [classgraph-4.8.184.jar/nonapi/io/github/classgraph/classloaderhandler/README](classgraph-4.8.184.jar/nonapi/io/github/classgraph/classloaderhandler/README)

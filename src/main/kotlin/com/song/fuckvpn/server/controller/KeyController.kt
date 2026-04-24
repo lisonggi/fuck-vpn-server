@@ -1,9 +1,9 @@
 package com.song.fuckvpn.server.controller
 
-import com.song.fuckvpn.server.command.KeyConfigCommand
 import com.song.fuckvpn.server.common.dto.ResultDto
-import com.song.fuckvpn.server.dto.KeyStateDto
-import com.song.fuckvpn.server.model.KeyConfig
+import com.song.fuckvpn.server.dto.KeyConfigResponse
+import com.song.fuckvpn.server.dto.KeyUpdateConfigRequest
+import com.song.fuckvpn.server.service.KeyService
 import com.song.fuckvpn.server.service.ServiceLoader
 import org.springframework.web.bind.annotation.*
 
@@ -12,34 +12,54 @@ import org.springframework.web.bind.annotation.*
 class KeyController(
     private val serviceLoader: ServiceLoader
 ) {
-    @GetMapping("/getKeyState")
-    fun getKeyState(@PathVariable id: String): ResultDto<KeyStateDto> {
-        val keyManager = serviceLoader.getKeyService(id).keyManager
-        return ResultDto("ok", KeyStateDto(keyManager.configUpdating, keyManager.checking, keyManager.config))
+    fun <T> keyService(id: String, block: (service: KeyService) -> T): T {
+        val service = serviceLoader.getKeyService(id)
+        return block(service)
     }
+
+    @GetMapping("/getKeyConfig")
+    fun getKeyConfig(@PathVariable id: String): ResultDto<KeyConfigResponse> = keyService(id) {
+        val keyManager = it.getKeyManager()
+        ResultDto(
+            "ok", KeyConfigResponse.fromManager(keyManager)
+        )
+    }
+
 
     @GetMapping("/getKeys")
-    fun getKeys(@PathVariable id: String): ResultDto<List<String>> {
-        val service = serviceLoader.getKeyService(id)
-        return ResultDto("ok", service.keyManager.keys.map { it.getViewText() }.toList())
+    fun getKeys(@PathVariable id: String): ResultDto<List<String>> = keyService(id) {
+        val keyManager = it.getKeyManager()
+        ResultDto("ok", keyManager.getKeys().map { it.getViewText() }.toList())
     }
 
+
     @PostMapping("/useKey")
-    fun useKey(@PathVariable id: String): ResultDto<String> {
-        val service = serviceLoader.getKeyService(id)
-        return ResultDto("ok", service.keyManager.useKey().getViewText())
+    fun useKey(@PathVariable id: String): ResultDto<String> = keyService(id) {
+        val keyManager = it.getKeyManager()
+        val nodeManager = it.nodeManager()
+
+        val key = keyManager.useKey()
+        val subscriptionLinks = nodeManager.getNodes().map { node ->
+            key.toSubscription(node)
+        }.joinToString("\n") { it }
+        ResultDto("ok", subscriptionLinks)
     }
 
     @PostMapping("/refreshKeys")
-    fun refreshKeys(@PathVariable id: String): ResultDto<Unit> {
-        val service = serviceLoader.getKeyService(id)
-        service.keyManager.refreshKeys()
-        return ResultDto("ok")
+    fun refreshKeys(@PathVariable id: String): ResultDto<KeyConfigResponse> = keyService(id) {
+        val keyManager = it.getKeyManager()
+        keyManager.refreshKeys()
+        ResultDto("ok", KeyConfigResponse.fromManager(keyManager))
     }
 
+
     @PutMapping("/updateKeyConfig")
-    fun updateCycle(@PathVariable id: String, @RequestBody command: KeyConfigCommand): ResultDto<KeyConfig> {
-        val service = serviceLoader.getKeyService(id)
-        return ResultDto("ok", service.keyManager.updateConfig(service.keyManager.config.copyWith(command)))
+    fun updateCycle(
+        @PathVariable id: String,
+        @RequestBody request: KeyUpdateConfigRequest
+    ): ResultDto<KeyConfigResponse> = keyService(id) {
+        val keyManager = it.getKeyManager()
+        keyManager.updateConfig(request)
+        ResultDto("ok", KeyConfigResponse.fromManager(keyManager))
     }
 }

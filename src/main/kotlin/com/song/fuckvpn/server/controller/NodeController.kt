@@ -1,9 +1,9 @@
 package com.song.fuckvpn.server.controller
 
-import com.song.fuckvpn.server.command.NodeConfigCommand
 import com.song.fuckvpn.server.common.dto.ResultDto
-import com.song.fuckvpn.server.dto.NodeConfigDto
-import com.song.fuckvpn.server.dto.NodeStateDto
+import com.song.fuckvpn.server.dto.NodeConfigResponse
+import com.song.fuckvpn.server.dto.NodeUpdateConfigRequest
+import com.song.fuckvpn.server.service.NodeService
 import com.song.fuckvpn.server.service.ServiceLoader
 import org.springframework.web.bind.annotation.*
 
@@ -12,44 +12,39 @@ import org.springframework.web.bind.annotation.*
 class NodeController(
     private val serviceLoader: ServiceLoader
 ) {
-    @GetMapping("/getNodeState")
-    fun getNodeState(@PathVariable id: String): ResultDto<NodeStateDto> {
-        val nodeManager = serviceLoader.getNodeService(id).nodeManager
-        return ResultDto(
-            "ok",
-            NodeStateDto(
-                nodeManager.configUpdating, nodeManager.generating, nodeManager.nextTime,
-                NodeConfigDto(
-                    nodeManager.config.autoRefresh,
-                    nodeManager.config.delayMilliseconds
-                )
-            )
-        )
+    fun <T> nodeService(id: String, block: (service: NodeService) -> T): T {
+        val service = serviceLoader.getKeyService(id)
+        return block(service)
     }
 
+    @GetMapping("/getNodeConfig")
+    fun getNodeConfig(@PathVariable id: String): ResultDto<NodeConfigResponse> = nodeService(id) {
+        val nodeManager = it.nodeManager()
+        ResultDto("ok", NodeConfigResponse.fromManager(nodeManager))
+    }
+
+
     @GetMapping("/getNodes")
-    fun getNodes(@PathVariable id: String): ResultDto<List<String>> {
-        val nodeManager = serviceLoader.getNodeService(id).nodeManager
-        return ResultDto("ok", nodeManager.nodes.map { it.getViewText() }.toList())
+    fun getNodes(@PathVariable id: String): ResultDto<List<String>> = nodeService(id) {
+        val nodeManager = it.nodeManager()
+        ResultDto("ok", nodeManager.getNodes().map { it.getViewText() }.toList())
     }
 
     @PostMapping("/refreshNodes")
-    fun refreshNodes(@PathVariable id: String): ResultDto<Unit> {
-        val nodeManager = serviceLoader.getNodeService(id).nodeManager
+    fun refreshNodes(@PathVariable id: String): ResultDto<NodeConfigResponse> = nodeService(id) {
+        val nodeManager = it.nodeManager()
         nodeManager.refreshNodes()
-        return ResultDto("ok")
+        ResultDto("ok", NodeConfigResponse.fromManager(nodeManager))
     }
 
     @PutMapping("/updateNodeConfig")
     fun updateNodeConfig(
-        @PathVariable id: String,
-        @RequestBody command: NodeConfigCommand
-    ): ResultDto<NodeConfigDto> {
-        val nodeManager = serviceLoader.getNodeService(id).nodeManager
-        val config = nodeManager.updateConfig(nodeManager.config.copyWith(command))
-        return ResultDto(
-            "ok",
-            NodeConfigDto(config.autoRefresh, config.delayMilliseconds)
+        @PathVariable id: String, @RequestBody request: NodeUpdateConfigRequest
+    ): ResultDto<NodeConfigResponse> = nodeService(id) {
+        val nodeManager = it.nodeManager()
+        nodeManager.updateConfig(request)
+        ResultDto(
+            "ok", NodeConfigResponse.fromManager(nodeManager)
         )
     }
 }

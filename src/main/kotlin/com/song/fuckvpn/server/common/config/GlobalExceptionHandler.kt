@@ -7,15 +7,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.servlet.NoHandlerFoundException
-import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<ResultDto<String>> {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ResultDto("服务器错误", e.message))
+            .body(ResultDto("未知的错误", e.message))
     }
 
     @ExceptionHandler(AppException::class)
@@ -23,10 +21,9 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ResultDto("请求失败", e.message))
     }
 
-    @ExceptionHandler(NoHandlerFoundException::class)
-    fun handleNotFound(e: NoHandlerFoundException): ResponseEntity<ResultDto<String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ResultDto("接口不存在", e.requestURL))
+    @ExceptionHandler(InvalidParameterException::class)
+    fun handleInvalidParameterException(e: InvalidParameterException): ResponseEntity<ResultDto<String>> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResultDto("参数不正确", e.message))
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
@@ -40,9 +37,11 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(ResultDto("不支持的插件", e.message))
     }
 
-    @ExceptionHandler(NotExistException::class)
-    fun handleNotExistException(e: NotExistException): ResponseEntity<ResultDto<String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResultDto("资源不存在", e.message))
+    @ExceptionHandler(NotExistException::class, NoSuchElementException::class)
+    fun handleNotFoundException(e: Exception): ResponseEntity<ResultDto<String>> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ResultDto("数据不存在", e.message))
     }
 
     @ExceptionHandler(NotAvailableException::class)
@@ -60,13 +59,8 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResultDto("认证失败", e.message))
     }
 
-    @ExceptionHandler(NoResourceFoundException::class)
-    fun handleNoResourceFoundException(e: NoResourceFoundException): ResponseEntity<ResultDto<String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResultDto("路径不存在", e.message))
-    }
-
-    @ExceptionHandler(NoSuchElementException::class)
-    fun handleNoSuchElementException(e: NoSuchElementException): ResponseEntity<ResultDto<String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResultDto("数据不存在", e.message))
+    @ExceptionHandler(ConflictException::class)
+    fun handleConflictException(e: ConflictException): ResponseEntity<ResultDto<String>> {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ResultDto("数据冲突", e.message))
     }
 }

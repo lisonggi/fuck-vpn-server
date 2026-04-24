@@ -1,9 +1,10 @@
 package com.song.fuckvpn.server.modules
 
-import com.song.fuckvpn.plugin.api.model.KeyData
+import com.song.fuckvpn.plugin.api.spec.KeyDataSpec
 import com.song.fuckvpn.server.common.exception.BusyException
 import com.song.fuckvpn.server.common.exception.NotExistException
-import com.song.fuckvpn.server.model.KeyConfig
+import com.song.fuckvpn.server.dto.KeyUpdateConfigRequest
+import com.song.fuckvpn.server.model.KeyConfigModel
 import com.song.fuckvpn.server.util.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -15,44 +16,41 @@ import kotlin.time.Duration.Companion.milliseconds
 class KeyManager {
     private val scope: CoroutineScope
 
-    private val onGenerateKey: suspend () -> KeyData
+    private val onGenerateKey: suspend () -> KeyDataSpec
 
     private var taskJob: Job? = null
 
     private val updateConfigMutex = Mutex()
     private val checkKeysMutex = Mutex()
 
-    private val queue: PriorityBlockingQueue<KeyData>
-    val keys: List<KeyData>
-        get() = queue.toList()
-    var config: KeyConfig
-        private set
-    val configUpdating: Boolean
-        get() = updateConfigMutex.isLocked
-    val checking: Boolean
-        get() {
-            return checkKeysMutex.isLocked
-        }
+    private var config: KeyConfigModel
 
+    private val queue: PriorityBlockingQueue<KeyDataSpec>
 
-    constructor(scope: CoroutineScope, config: KeyConfig, onGenerateKey: suspend () -> KeyData) {
+    constructor(scope: CoroutineScope, config: KeyConfigModel, onGenerateKey: suspend () -> KeyDataSpec) {
         this.scope = scope
         this.config = config
         this.onGenerateKey = onGenerateKey
-        this.queue = PriorityBlockingQueue(config.keySize, compareBy<KeyData> { it.getExpireAt() ?: Long.MAX_VALUE })
+        this.queue =
+            PriorityBlockingQueue(config.keySize, compareBy<KeyDataSpec> { it.getExpireAt() ?: Long.MAX_VALUE })
     }
 
-    fun updateConfig(config: KeyConfig): KeyConfig {
+    fun getConfig(): KeyConfigModel = config
+    fun getChecking(): Boolean = checkKeysMutex.isLocked
+    fun getConfigUpdating(): Boolean = updateConfigMutex.isLocked
+    fun getKeys(): List<KeyDataSpec> = queue.toList()
+
+    fun updateConfig(request: KeyUpdateConfigRequest): KeyConfigModel {
         if (!updateConfigMutex.tryLock()) {
             throw BusyException("无法更新密钥任务配置")
         }
         try {
-            if (config == this.config) {
-                return config
+            val newConfig = this.config.fromUpdateConfigRequest(request)
+            if (newConfig != this.config) {
+                this.config = newConfig
+                reConfig()
             }
-            this.config = config
-            reConfig()
-            return this.config
+            return newConfig
         } finally {
             updateConfigMutex.unlock()
         }
@@ -123,7 +121,7 @@ class KeyManager {
         taskJob = null
     }
 
-    fun refreshKeys() {
+    fun refreshKeys(): KeyConfigModel {
         cancel()
         queue.clear()
         if (config.autoFill) {
@@ -133,9 +131,10 @@ class KeyManager {
                 checkKeys()
             }
         }
+        return config
     }
 
-    fun useKey(): KeyData {
+    fun useKey(): KeyDataSpec {
         val key = queue.poll() ?: throw NotExistException("没有有效的密钥")
         reConfig()
         return key

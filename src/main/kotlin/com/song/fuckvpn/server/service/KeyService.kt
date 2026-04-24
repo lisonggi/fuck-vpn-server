@@ -1,40 +1,41 @@
 package com.song.fuckvpn.server.service
 
-import com.song.fuckvpn.plugin.api.KeyPlugin
-import com.song.fuckvpn.plugin.api.model.KeyData
-import com.song.fuckvpn.plugin.api.model.PluginInfo
-import com.song.fuckvpn.server.model.KeyConfig
+import com.song.fuckvpn.plugin.api.spec.KeyDataSpec
+import com.song.fuckvpn.plugin.api.spec.KeyPluginSpec
+import com.song.fuckvpn.server.model.KeyConfigModel
+import com.song.fuckvpn.server.model.PluginInfoModel
 import com.song.fuckvpn.server.modules.KeyManager
 import com.song.fuckvpn.server.store.PluginConfig
 import kotlinx.coroutines.cancel
 
-class KeyService(pluginInfo: PluginInfo, val keyPlugin: KeyPlugin) : NodeService(pluginInfo, keyPlugin) {
-    protected val _keyManager: KeyManager = KeyManager(scope, config.keyConfig ?: KeyConfig(false, 5), ::onGenerateKey)
+class KeyService(pluginInfo: PluginInfoModel, val keyPlugin: KeyPluginSpec) : NodeService(pluginInfo, keyPlugin) {
 
-    val keyManager: KeyManager
-        get() = requireRun { _keyManager }
+    private val keyManager: KeyManager =
+        KeyManager(scope, config.keyConfig ?: KeyConfigModel(false, 5), ::onGenerateKey)
+
 
     override fun start() {
-        if (stateManager.enabled) {
+        if (pluginManager.getConfig().enabled) {
             nodeManager.reConfig()
-            _keyManager.reConfig()
+            keyManager.reConfig()
         }
     }
 
     override fun stop() {
         configStore.save(
             PluginConfig(
-                stateManager.enabled,
-                _subManager.enabled,
-                _subManager._subscriptions,
-                _nodeManager.config,
-                _keyManager.config
+                pluginManager.getConfig(),
+                nodeManager.getConfig(),
+                keyManager.getConfig(),
+                subscriptionManager.getConfig()
             )
         )
         scope.cancel()
     }
 
-    suspend fun onGenerateKey(): KeyData {
+    suspend fun onGenerateKey(): KeyDataSpec {
         return keyPlugin.generateKey()
     }
+
+    fun getKeyManager(): KeyManager = requireRun { keyManager }
 }

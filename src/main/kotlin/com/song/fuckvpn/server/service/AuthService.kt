@@ -1,7 +1,10 @@
 package com.song.fuckvpn.server.service
 
 import com.song.fuckvpn.server.common.exception.AuthException
-import com.song.fuckvpn.server.model.UserConfig
+import com.song.fuckvpn.server.dto.UserLoginRequest
+import com.song.fuckvpn.server.dto.UserUpdateConfigRequest
+import com.song.fuckvpn.server.model.TokenModel
+import com.song.fuckvpn.server.model.UserConfigModel
 import com.song.fuckvpn.server.store.ConfigStore
 import com.song.fuckvpn.server.util.IdUtil
 import jakarta.annotation.PreDestroy
@@ -10,38 +13,50 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService {
-    val configStore: ConfigStore<UserConfig?> = ConfigStore("UserConfig.json", UserConfig.serializer().nullable) { null }
-    var userConfig: UserConfig? = configStore.load()
-    var token = generateToken()
+    private val configStore: ConfigStore<UserConfigModel?> =
+        ConfigStore("UserConfig.json", UserConfigModel.serializer().nullable) { null }
+    private var config: UserConfigModel? = configStore.load()
 
-    fun login(userConfig: UserConfig): String {
-        if (this.userConfig == null || this.userConfig == userConfig) {
-            val token = generateToken()
-            this.token = token
-            return token
+    private val defaultTokenModel = TokenModel(generateToken())
+    private var tokenModel: TokenModel = defaultTokenModel
+
+    fun login(request: UserLoginRequest): TokenModel {
+        this.config?.let {
+            if (config != UserConfigModel.fromLoginRequest(request)) {
+                throw AuthException("用户名或密码错误")
+            }
         }
-        throw AuthException("用户名或密码错误")
+        val token = TokenModel(generateToken())
+        this.tokenModel = token
+        return token
     }
 
-    fun logout() {
-        this.token = generateToken()
+    fun logout(): TokenModel {
+        val token = tokenModel
+        this.tokenModel = defaultTokenModel
+        return token
     }
 
     fun checkToken(token: String): Boolean {
-        return this.token == token
+        return this.tokenModel.token == token
     }
 
-    fun updateConfig(userConfig: UserConfig): UserConfig {
-        this.userConfig = userConfig
-        return userConfig
+    fun updateConfig(request: UserUpdateConfigRequest): UserConfigModel {
+        val config = this.config?.fromUpdateConfigRequest(request) ?: UserConfigModel.fromUpdateConfigRequest(request)
+        this.config = config
+        return config
     }
 
     private fun generateToken(): String {
         return IdUtil.generateId().replace("-", "")
     }
 
+    fun getUser(): UserConfigModel? {
+        return config
+    }
+
     @PreDestroy
     fun stop() {
-        configStore.save(userConfig)
+        configStore.save(config)
     }
 }

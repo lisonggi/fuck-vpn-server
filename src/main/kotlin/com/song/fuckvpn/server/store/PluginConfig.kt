@@ -1,15 +1,15 @@
 package com.song.fuckvpn.server.store
 
-import com.song.fuckvpn.server.model.KeyConfig
-import com.song.fuckvpn.server.model.NodeConfig
-import com.song.fuckvpn.server.model.Subscription
+import com.song.fuckvpn.server.model.KeyConfigModel
+import com.song.fuckvpn.server.model.NodeConfigModel
+import com.song.fuckvpn.server.model.PluginConfigModel
+import com.song.fuckvpn.server.model.SubscriptionConfigModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PluginConfig(
-    var enabled: Boolean? = null,
-    var subscriptionEnabled: Boolean? = null,
-    var subscriptions: Map<String, Subscription>? = null,
-    var nodeConfig: NodeConfig? = null,
-    var keyConfig: KeyConfig? = null
+    val pluginConfig: PluginConfigModel,
+    val nodeConfig: NodeConfigModel,
+    val keyConfig: KeyConfigModel? = null,
+    val subscriptionConfig: SubscriptionConfigModel
 )
