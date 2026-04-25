@@ -4,6 +4,7 @@ import com.song.fuckvpn.plugin.api.spec.NodeDataSpec
 import com.song.fuckvpn.server.common.exception.BusyException
 import com.song.fuckvpn.server.dto.NodeUpdateConfigRequest
 import com.song.fuckvpn.server.model.NodeConfigModel
+import com.song.fuckvpn.server.util.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -55,7 +56,11 @@ class NodeManager {
 
     private suspend fun generateNodes() {
         generateNodesMutex.withLock {
-            nodes = onGenerateNodes()
+            try {
+                nodes = onGenerateNodes()
+            }catch (e: Exception) {
+                e.message?.log?.error()
+            }
         }
     }
 
