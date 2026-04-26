@@ -30,7 +30,7 @@ open class NodeService(
             pluginConfig = PluginConfigModel(false),
             nodeConfig = NodeConfigModel(false, 1000 * 60 * 10),
             subscriptionConfig = SubscriptionConfigModel(
-                false, sort = null,
+                enabled =  false,successTip = null,sort = null,
                 items = emptyMap()
             )
         )

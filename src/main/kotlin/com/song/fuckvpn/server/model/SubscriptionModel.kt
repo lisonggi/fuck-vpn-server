@@ -4,10 +4,11 @@ import com.song.fuckvpn.server.dto.SubscriptionConfigRequest
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SubscriptionConfigModel(val enabled: Boolean, val sort: String?, val items: Map<String, ItemModel>) {
+data class SubscriptionConfigModel(val enabled: Boolean,val successTip:String?, val sort: String?, val items: Map<String, ItemModel>) {
     fun fromUpdateConfigRequest(request: SubscriptionConfigRequest.UpdateConfigRequest): SubscriptionConfigModel {
         val sort = if (request.sort.isPresent) request.sort.orElse(null) else this.sort
-        return copy(enabled = request.enabled ?: this.enabled, sort = sort)
+        val successTip = if (request.successTip.isPresent) request.successTip.orElse(null) else this.successTip
+        return copy(enabled = request.enabled ?: this.enabled,successTip= successTip, sort = sort)
     }
 
     @Serializable

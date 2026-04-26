@@ -24,7 +24,7 @@ class SubscriptionManager {
     }
 
     fun <T> tryEnabled(block: () -> T): T {
-        getConfig().enabled.takeIf { it } ?: throw NotAvailableException("订阅已关闭")
+        getConfig().enabled.takeIf { it } ?: throw NotAvailableException("订阅功能已关闭")
         return block()
     }
 
@@ -101,9 +101,9 @@ class SubscriptionManager {
         tryEnabled {
             withLock(uuid) {
                 val item = config.items[uuid] ?: throw NotExistException("没有这个订阅")
-                item.enabled.takeIf { it } ?: throw NotAvailableException("订阅已禁用")
-                item.expireAt?.let { if (System.currentTimeMillis() > it) throw NotAvailableException("订阅已过期") }
-                item.usageLimit?.let { if (item.records.size >= it) throw NotAvailableException("订阅次数用完了") }
+                item.enabled.takeIf { it } ?: throw NotAvailableException("这个订阅已禁用")
+                item.expireAt?.let { if (System.currentTimeMillis() > it) throw NotAvailableException("这个订阅已过期") }
+                item.usageLimit?.let { if (item.records.size >= it) throw NotAvailableException("这个订阅次数用完了") }
                 val newItem = item.copy(
                     records = item.records + SubscriptionConfigModel.ItemModel.RecordModel(
                         ip, System.currentTimeMillis(), userAgent

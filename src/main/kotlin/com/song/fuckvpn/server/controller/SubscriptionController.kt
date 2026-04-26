@@ -65,8 +65,7 @@ class SubscriptionController(
 
     @PutMapping("/updateSub")
     fun updateSub(
-        @PathVariable id: String,
-        @RequestBody request: SubscriptionConfigRequest.UpdateItemRequest
+        @PathVariable id: String, @RequestBody request: SubscriptionConfigRequest.UpdateItemRequest
     ): ResultDto<SubscriptionResponse.ItemResponse> = nodeService(id) {
         val subManager = it.subscriptionManager()
         val pair = subManager.update(request)
@@ -99,23 +98,18 @@ class SubscriptionController(
     ): String = nodeService(id) { service ->
         val nodeManager = service.nodeManager()
         val subManager = service.subscriptionManager()
-        subManager.useSub(
-            uuid, IpUtil.getClientIp(httpRequest), httpRequest.getHeader("user-agent")
-        ) { config, itemConfig ->
-            val nodes = nodeManager.getNodes().toMutableList()
-            if (nodes.isNotEmpty()) {
-                val key = (service as? KeyService)
-                    ?.getKeyManager()
-                    ?.useKey()
+        try {
+            subManager.useSub(
+                uuid, IpUtil.getClientIp(httpRequest), httpRequest.getHeader("user-agent")
+            ) { config, itemConfig ->
+                val nodes = nodeManager.getNodes().toMutableList()
+                if (nodes.isNotEmpty()) {
+                    val key = (service as? KeyService)?.getKeyManager()?.useKey()
 
-                val sorts = listOf(sort, itemConfig.sort, config.sort)
-                    .firstNotNullOfOrNull { it?.trim() }
-                    ?.split(",")
-                    ?.map { it.trim() }
-                    ?.filter { it.isNotEmpty() }
-                    ?: emptyList()
-                val result = nodes.sortedWith(
-                    compareByDescending<NodeDataSpec> { node ->
+                    val sorts =
+                        listOf(sort, itemConfig.sort, config.sort).firstNotNullOfOrNull { it?.trim() }?.split(",")
+                            ?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+                    val result = nodes.sortedWith(compareByDescending<NodeDataSpec> { node ->
                         sorts.sumOf { key ->
                             when {
                                 node.name == key -> 100        // 完全匹配
@@ -124,20 +118,32 @@ class SubscriptionController(
                                 else -> 0
                             }
                         }
-                    }.thenBy { it.name }
-                ).toMutableList()
-                val defaultNodeData = result.first().copy().apply {
-                    name = "默认"
+                    }.thenBy { it.name }).toMutableList()
+                    if (config.successTip != null) {
+                        val successData = result.first().copy().apply {
+                            name = config.successTip
+                        }
+                        result.addFirst(successData)
+                    }
+                    val defaultNodeData = result.first().copy().apply {
+                        name = "默认"
+                    }
+                    result.addFirst(defaultNodeData)
+                    val joinString = result.joinToString("\n") { node ->
+                        val link = key?.toSubscription(node) ?: node.toSubscription()
+                        link
+                    }
+                    return@useSub joinString
+                } else {
+                    throw NotExistException("没有有效的节点")
                 }
-                result.addFirst(defaultNodeData)
-
-                val joinString = result.joinToString("\n") { node ->
-                    key?.toSubscription(node) ?: node.toSubscription()
-                }
-                return@useSub joinString
-            } else {
-                throw NotExistException("没有有效的节点")
             }
+        } catch (e: Exception) {
+            val strings = mutableListOf<String>()
+            strings.add("trojan://password@127.0.0.1:443?security=tls&sni=www.domain.net&allowInsecure=1&type=tcp&headerType=none#默认")
+            strings.add("trojan://password@127.0.0.1:443?security=tls&sni=www.domain.net&allowInsecure=1&type=tcp&headerType=none#${e.message}")
+            val joinString = strings.joinToString("\n")
+            return@nodeService joinString
         }
     }
 }

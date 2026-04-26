@@ -5,7 +5,12 @@ import com.song.fuckvpn.server.model.SubscriptionConfigModel.ItemModel.RecordMod
 import org.openapitools.jackson.nullable.JsonNullable
 
 class SubscriptionConfigRequest {
-    data class UpdateConfigRequest(val enabled: Boolean?, val sort: JsonNullable<String> = JsonNullable.undefined())
+    data class UpdateConfigRequest(
+        val enabled: Boolean?,
+        val successTip: JsonNullable<String> = JsonNullable.undefined(),
+        val sort: JsonNullable<String> = JsonNullable.undefined()
+    )
+
     data class AddItemRequest(
         val name: String?,
         val enabled: Boolean?,
@@ -25,10 +30,10 @@ class SubscriptionConfigRequest {
 }
 
 class SubscriptionResponse {
-    data class ConfigResponse(val enabled: Boolean, val sort: String?) {
+    data class ConfigResponse(val enabled: Boolean, val successTip: String?, val sort: String?) {
         companion object {
             fun fromModel(model: SubscriptionConfigModel): ConfigResponse {
-                return ConfigResponse(model.enabled, model.sort)
+                return ConfigResponse(model.enabled, model.successTip,model.sort)
             }
         }
     }
