@@ -22,15 +22,6 @@ java {
     }
 }
 
-repositories {
-    mavenLocal()
-    maven { url = uri("https://maven.aliyun.com/repository/google") }
-    maven { url = uri("https://maven.aliyun.com/repository/public") }
-    maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
-    maven { url = uri("https://jitpack.io") }
-    mavenCentral()
-}
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -43,8 +34,7 @@ dependencies {
     implementation("io.github.classgraph:classgraph:4.8.184")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("org.openapitools:jackson-databind-nullable:0.2.10")
-//    implementation("com.github.lisonggi:fuck-vpn-plugin-api:4fc1624fd6")
-    implementation("com.song:fuck-vpn-plugin-api:library")
+    implementation("com.github.lisonggi:fuck-vpn-plugin-api:8dab0a353a")
 }
 
 kotlin {
